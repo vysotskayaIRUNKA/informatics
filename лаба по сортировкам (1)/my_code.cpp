@@ -78,8 +78,8 @@ void QuickSort(int *a, int left, int right) {
 
 void CombSort(int *a, int n) {
   int step = n;
-  bool swapped;
-  while (step > 1) {
+  bool swapped=true;
+  while (step > 1 || swapped==true) {
     step = max(1, int(step / 1.2));
     swapped = false;
     for (int i = 0; i + step < n; i++)
@@ -133,8 +133,8 @@ void MergeSort(int *a, int left, int right) {
 
 void ObrSort(int *a, int n) {
   int step = n;
-  bool swapped;
-  while (step > 1) {
+  bool swapped = true;
+  while (step > 1 || swapped==true) {
     step = max(1, int(step / 1.2));
     swapped = false;
     for (int i = 0; i + step < n; i++)
@@ -152,9 +152,9 @@ int main() {
   // file.open("вставка.csv");
   // file.open("пузырек.csv");
   // file.open("выбор.csv");
-  file.open("слияние худший вариант.csv");
+  //file.open("слияние худший вариант.csv");
   for (int i = 0; i < sizeof(l) / sizeof(l[0]); i++) {
-    file << "Размер массива - " << l[i] << endl;
+    cout << "Размер массива - " << l[i] << endl;
     for (int j = 0; j < 10; j++) {
       int a[100000];
       for (int k = 0; k < l[i]; k++) {
@@ -163,10 +163,10 @@ int main() {
       // CombSort(a, l[i]);
       ObrSort(a, l[i]);
       auto start = std::chrono::high_resolution_clock::now();
-      MergeSort(a, 0, l[i]);
+      BubbleSort(a, l[i]);
       auto end = std::chrono::high_resolution_clock::now();
       auto nsec = end - start;
-      file << nsec.count() << " нсек." << endl;
+      cout << nsec.count() << " нсек." << endl;
     }
   }
 
