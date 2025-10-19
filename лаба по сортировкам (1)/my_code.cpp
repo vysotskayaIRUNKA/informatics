@@ -78,8 +78,8 @@ void QuickSort(int *a, int left, int right) {
 
 void CombSort(int *a, int n) {
   int step = n;
-  bool swapped=true;
-  while (step > 1 || swapped==true) {
+  bool swapped = true;
+  while (step > 1 || swapped == true) {
     step = max(1, int(step / 1.2));
     swapped = false;
     for (int i = 0; i + step < n; i++)
@@ -132,16 +132,16 @@ void MergeSort(int *a, int left, int right) {
 }
 
 void ObrSort(int *a, int n) {
-  int step = n;
-  bool swapped = true;
-  while (step > 1 || swapped==true) {
-    step = max(1, int(step / 1.2));
-    swapped = false;
-    for (int i = 0; i + step < n; i++)
-      if (a[i] < a[i + step]) {
-        sw(a, i, i + step);
+  for (auto i = 0; i < n - 1; i++) {
+    bool swapped = false;
+    for (auto j = 0; j < n - i - 1; j++) {
+      if (a[j] < a[j + 1]) {
+        sw(a, j, j + 1);
         swapped = true;
       }
+    }
+    if (not swapped)
+      return;
   }
 }
 
@@ -152,7 +152,7 @@ int main() {
   // file.open("вставка.csv");
   // file.open("пузырек.csv");
   // file.open("выбор.csv");
-  //file.open("слияние худший вариант.csv");
+  // file.open("слияние худший вариант.csv");
   for (int i = 0; i < sizeof(l) / sizeof(l[0]); i++) {
     cout << "Размер массива - " << l[i] << endl;
     for (int j = 0; j < 10; j++) {
@@ -160,8 +160,8 @@ int main() {
       for (int k = 0; k < l[i]; k++) {
         a[k] = rand_uns(0, 10000);
       }
-      // CombSort(a, l[i]);
-      ObrSort(a, l[i]);
+      // BubbleSort(a, l[i]);
+      // ObrSort(a, l[i]);
       auto start = std::chrono::high_resolution_clock::now();
       BubbleSort(a, l[i]);
       auto end = std::chrono::high_resolution_clock::now();
@@ -169,15 +169,5 @@ int main() {
       cout << nsec.count() << " нсек." << endl;
     }
   }
-
-  /*int b[10];
-  for (int i = 0; i < 10; i++) {
-    b[i] = rand_uns(0, 1000000);
-    cout << b[i] << ' ';
-  }
-  cout << endl;
-  InsertionSort(b, 10);
-  for (int i = 0; i < 10; i++)
-    cout << b[i] << " ";*/
   file.close();
 }
