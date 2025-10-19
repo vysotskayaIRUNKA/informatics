@@ -40,6 +40,17 @@ void infinite_cycle() {
   }
 }
 
+double pow(double x) { return x * x * x; }
+
+double square(double n) {
+  double step = 1.0 / n;
+  double summ = 0;
+  for (int i = 0; i < n; i++) {
+    summ += pow(step * i) * step;
+  }
+  return summ;
+}
+
 int main() {
   /*unsigned n;
   std::cin >> n;
@@ -53,7 +64,12 @@ int main() {
   std::cout.precision(2);
   overflow_mantissa();*/
 
-  std::cout << std::fixed;
+  /*std::cout << std::fixed;
   std::cout.precision(2);
-  infinite_cycle();
+  infinite_cycle();*/
+
+  for (double n = 1; n < 1000000; n += 5000)
+    std::cout << n << " - значение площади - " << square(n) << std::endl;
+
+  // std::cout << square(3) << std::endl;
 }
