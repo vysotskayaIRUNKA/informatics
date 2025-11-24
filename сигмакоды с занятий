@@ -1,0 +1,257 @@
+// С помощью печати символа '+' нарисуйте на экране прямоугольную рамку заданного размера.
+#include <iostream>
+using namespace std;
+int main() {
+  int n, m;
+  cin >> n >> m;
+  for (int i = 0; i < n; i++) {
+    for (int j = 0; j < m; j++) {
+      if (i == 0 || i == (n - 1) || j == 0 || j == (m - 1))
+        cout << '+';
+      else
+        cout << ' ';
+    }
+    cout << endl;
+  }
+}
+
+
+// Простое число с заданным номером
+#include <iostream>
+using namespace std;
+int main() {
+  int n;
+  cin >> n;
+  int now = 2;
+  while (n > 0) {
+    int del = 0;
+    for (int i = 2; i < now; i++) {
+      if (now % i == 0) {
+        del++;
+      }
+    }
+    if (del == 0)
+      n--;
+    if (n == 0)
+      cout << now;
+    now++;
+  }
+}
+
+
+// С помощью печати символа '+' нарисуйте на экране ромб заданного размера.
+#include <iostream>
+using namespace std;
+int main() {
+  int n;
+  cin >> n;
+  int half = (n - (n % 2)) / 2;
+  int count_of_p = 1;
+  for (int i = 1; i <= half; i++) {
+    for (int j = 0; j < (half + 1 - i); j++)
+      cout << ' ';
+    for (int j = 0; j < count_of_p; j++)
+      cout << '+';
+    count_of_p += 2;
+    cout << endl;
+  }
+  for (int j = 0; j < count_of_p; j++)
+    cout << '+';
+  cout << endl;
+  count_of_p -= 2;
+  int count_of_s = 1;
+  for (int i = 1; i <= half; i++) {
+    for (int j = 0; j < count_of_s; j++)
+      cout << ' ';
+    count_of_s++;
+    for (int j = 0; j < count_of_p; j++)
+      cout << '+';
+    count_of_p -= 2;
+    cout << endl;
+  }
+}
+
+
+// Перевод числа в двоичную систему счисления
+#include <iostream>
+using namespace std;
+int main() {
+  int n;
+  cin >> n;
+  string ans = "";
+  if (n == 0) {
+    cout << 0 << endl;
+    return 0;
+  }
+  while (n > 0) {
+    string s1;
+    if (n % 2 == 1)
+      s1 = '1';
+    else
+      s1 = '0';
+    ans += s1;
+    n /= 2;
+  }
+  string norm_ans;
+  for (int i = ans.size() - 1; i >= 0; i--)
+    norm_ans += ans[i];
+  cout << norm_ans << endl;
+  return 0;
+}
+
+
+// НОК трех чисел
+#include <iostream>
+using namespace std;
+int main() {
+  int a, b, c;
+  cin >> a >> b >> c;
+  int i = 2;
+  int ans = 1;
+  while (a > 1 || b > 1 || c > 1) {
+    while (a % i == 0 || b % i == 0 || c % i == 0) {
+      if (a % i == 0)
+        a = a / i;
+      if (b % i == 0)
+        b = b / i;
+      if (c % i == 0)
+        c = c / i;
+      ans *= i;
+    }
+    i++;
+  }
+  cout << ans << endl;
+}
+
+
+// Тот тупой бег наперегонки
+#include <iostream>
+using namespace std;
+
+int main() {
+  int x_scv, x_drone, v_scv, v_drone, x_minerals;
+  cin >> x_scv >> x_drone >> v_scv >> v_drone >> x_minerals;
+  bool scv = true;
+  bool prev_scv = true;
+  bool drone = true;
+  bool prev_drone = true;
+  while (x_scv < x_minerals && x_drone < x_minerals) {
+    if (scv == true)
+      x_scv += v_scv;
+    if (drone == true)
+      x_drone += v_drone;
+    if (x_scv - x_drone == 1)
+      scv = false;
+    else if (x_drone - x_scv == 1)
+      drone = false;
+    if (prev_scv == false)
+      scv = true;
+    if (prev_drone == false)
+      drone = true;
+    prev_scv = scv;
+    prev_drone = drone;
+  }
+  // cout << x_scv << " " << x_drone << endl;
+  if ((x_scv >= x_minerals) && (x_drone < x_minerals))
+    cout << "SCV" << endl;
+  else if ((x_scv < x_minerals) && (x_drone >= x_minerals))
+    cout << "drone" << endl;
+  else
+    cout << "both" << endl;
+}
+
+
+// Напишите функцию, которая считывает с экрана одно число в шестнадцатеричном формате, даже если оно написано с лишними непробельными символами или строчными буквами.
+unsigned long long int get_really_any_hexadecimal()
+{
+      char c;
+  cin.get(c);
+  auto res = 0ull;
+  while (c != ' ' && c != '\n') {
+    if (('0' <= c && c <= '9') || ('a' <= c && c <= 'f') ||
+        ('A' <= c && c <= 'F'))
+      res *= 16;
+    // cout << res << ' ' << c << endl;
+    /*if (!(('0' <= c && c <= '9') || ('A' <= c && c <= 'F')))
+      return 0;*/
+    if ('0' <= c && c <= '9') {
+      res += c - '0';
+    }
+    if ('A' <= c && c <= 'F') {
+      res += 10 + c - 'A';
+    }
+    if ('a' <= c && c <= 'f')
+      res += 10 + c - 'a';
+    cin.get(c);
+  }
+  return res;
+
+}
+
+
+// Перевод в двоичную систему счисления, пользуясь бинарной поеботой
+#include <iostream>
+using namespace std;
+int main() {
+  auto mask = 1u << 31;
+  unsigned int n;
+  cin >> n;
+  while (mask > 0) {
+    cout << ((n & mask) != 0);
+    mask = mask >> 1;
+  }
+}
+
+
+// Количество локальных максимумов
+#include <iostream>
+using namespace std;
+int main() {
+  int n;
+  cin >> n;
+  int left, nash, right;
+  int c = 0;
+  cin >> left >> nash;
+  if (n == 2) {
+    if (left != nash)
+      cout << 1;
+    return 0;
+  }
+  if (left > nash)
+    c++;
+  for (int i = 3; i <= n; i++) {
+    cin >> right;
+    if (nash > left && nash > right)
+      c++;
+    if (i == n && right > nash)
+      c++;
+    left = nash;
+    nash = right;
+  }
+  cout << c << endl;
+}
+
+
+// Владимир и матанализ
+#include <iostream>
+using namespace std;
+int main() {
+  int f, n, m, d;
+  cin >> f >> n >> m >> d;
+  int expectation[100];
+  int reality[100];
+  for (int i = 0; i < n; i++)
+    cin >> expectation[i];
+  for (int i = 0; i < n; i++)
+    cin >> reality[i];
+  int i = 0;
+  while (f > 0 && i < n) {
+    f -= reality[i];
+    if (reality[i] < expectation[i])
+      f += m;
+    else if (reality[i] > expectation[i])
+      f -= d;
+    i++;
+  }
+  cout << i << endl;
+}
