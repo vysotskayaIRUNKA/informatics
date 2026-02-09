@@ -142,14 +142,65 @@ private:
 	int *port;
 };
 
-int main()
-{
-	SpacePort s(5);
-	cout << boolalpha << s.requestLanding(0) << endl;
-	cout << boolalpha << s.requestLanding(4) << endl;
-	cout << boolalpha << s.requestLanding(5) << endl;
+class Animal {
+public:
+	virtual std::string getType() = 0;
+	virtual bool isDangerous() = 0;
+};
 
-	cout << boolalpha << s.requestTakeoff(0) << endl;
-	cout << boolalpha << s.requestTakeoff(4) << endl;
-	cout << boolalpha << s.requestTakeoff(5) << endl;
-}
+class ZooKeeper {
+public:
+	// Создаём смотрителя зоопарка
+	ZooKeeper() { number_of_dangerous = 0; }
+
+	// Смотрителя попросили обработать очередного зверя.
+	// Если зверь был опасный, смотритель фиксирует у себя этот факт.
+	void handleAnimal(Animal *a)
+	{
+		if ((*a).isDangerous())
+			number_of_dangerous++;
+	}
+
+	// Возвращает, сколько опасных зверей было обработано на данный момент.
+	int getDangerousCount() { return number_of_dangerous; }
+
+private:
+	int number_of_dangerous;
+};
+
+class Material {
+public:
+	// Принимает на вход величину деформации.
+	// Возвращает величину напряжения, посчитанную с учётом реологии материала.
+	virtual float getStress(float strain) = 0;
+};
+
+class ElasticMaterial : public Material {
+public:
+	ElasticMaterial(float elasticModulus)
+	{
+		this->elasticModulus = elasticModulus;
+	}
+	float getStress(float strain) { return strain * elasticModulus; }
+
+private:
+	float elasticModulus;
+};
+
+class PlasticMaterial : public Material {
+public:
+	PlasticMaterial(float elasticModulus, float strainLimit)
+	{
+		this->elasticModulus = elasticModulus;
+		this->strainLimit = strainLimit;
+	}
+	float getStress(float strain)
+	{
+		if (strain > this->strainLimit)
+			return strainLimit * elasticModulus;
+		return strain * elasticModulus;
+	}
+
+protected:
+	float elasticModulus, strainLimit;
+};

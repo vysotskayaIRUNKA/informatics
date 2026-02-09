@@ -6,7 +6,7 @@ public:
 
 	double area() { return 0; }
 
-private:
+protected:
 	std::string name;
 };
 
@@ -25,11 +25,8 @@ protected:
 };
 
 class Square : public Rectangle {
-	Square(double a)
-	{
-		this->a = a;
-		this->b = a;
-	}
+public:
+	Square(double a): Rectangle(a, a)
 };
 
 class Circle : public Shape {
@@ -37,6 +34,6 @@ public:
 	Circle(double r) { this->r = r; }
 	double area() { return 3.14 * r * r; }
 
-private:
+protected:
 	double r;
 };
