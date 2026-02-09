@@ -3,4 +3,5 @@
 int main()
 {
 	std::cout << "пошли гулять?" << std::endl;
+	std::cout << "ну или погамаем" << std::endl;
 }
