@@ -4,6 +4,10 @@ struct pop{
 	int b;
 };
 
+struct pop1{
+	std::string wow;
+};
+
 int main()
 {
 	std::cout << "пошли гулять?" << std::endl;
