@@ -1,4 +1,8 @@
 #include <iostream>
+struct pop{
+	int a;
+	int b;
+};
 
 int main()
 {
