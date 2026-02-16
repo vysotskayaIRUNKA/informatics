@@ -9,7 +9,7 @@ public:
 		this->chance_of_luck = 50; // го делать просто int от 0 до 100, типа
 		                           // проценты
 	}
-	void set_luck(int cof) { this->chance_of_luck = cof; }
+	virtual void set_luck(int cof) = 0;
 
 protected:
 	std::string name;
