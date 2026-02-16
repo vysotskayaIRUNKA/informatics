@@ -1,11 +1,21 @@
 #include <iostream>
-struct pop {
-	int a;
-	int b;
-};
+class Subject {
+public:
+	Subject()
+	{
+		this->name = "";
+		this->teacher_name = "";
+		this->longliness_in_minutes = 0;
+		this->chance_of_luck = 50; // го делать просто int от 0 до 100, типа
+		                           // проценты
+	}
+	void set_luck(int cof) { this->chance_of_luck = cof; }
 
-struct pop1{
-	std::string wow;
+protected:
+	std::string name;
+	std::string teacher_name;
+	int longliness_in_minutes;
+	int chance_of_luck;
 };
 
 int main()
