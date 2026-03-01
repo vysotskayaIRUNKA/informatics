@@ -1,5 +1,7 @@
 #include <ctime>
 #include <iostream>
+#include <set>
+#include <string>
 
 int my_rand() {
   time_t seed;
@@ -113,13 +115,12 @@ protected:
   std::string mood = "neutral"; //могут быть awful, neutral, normal, wonderful
 };
 
-class Chemistry : public PE {
+class Language : public PE {
 public:
-  Chemistry(std::string name, std::string teacher_name,
-            int longliness_in_minutes, std::string *themes,
-            int number_of_themes)
-      : PE(name, teacher_name, longliness_in_minutes, 40, themes,
-           number_of_themes, "awful") {}
+  Language(std::string name, std::string teacher_name,
+           int longliness_in_minutes, int chance_of_luck)
+      : PE(name, teacher_name, longliness_in_minutes, chance_of_luck, {}, 0,
+           "normal") {}
   void test(std::string t) {
     int value = my_rand();
     int prokatit = value % 100;
@@ -143,11 +144,138 @@ public:
         return;
       }
     }
+    if (chance_of_luck < prokatit % 10) {
+      std::cout << "Ты завалил решающую контрольную по " << name
+                << " и тебя отправили в академ" << std::endl;
+      return;
+    }
     std::cout << "Ты вообще впервые слышишь о теме сегодняшней контрольной и "
                  "ты завалил её. Теперь твой процент удачи "
               << chance_of_luck - prokatit % 10 << "%" << std::endl;
     chance_of_luck -= prokatit % 10;
   }
+};
+
+class Chemistry : public Language {
+public:
+  Chemistry(std::string name, std::string teacher_name,
+            int longliness_in_minutes, int chance_of_luck)
+      : Language(name, teacher_name, longliness_in_minutes, 40) {}
+  void laba() {
+    int number_of_necessary_oksids = my_rand() % 7;
+    std::string *taken_oksids = new std::string[number_of_necessary_oksids];
+    std::set<std::string> our_set;
+    for (int i = 0; i < number_of_necessary_oksids; i++) {
+      std::string t = std::to_string(my_rand());
+      taken_oksids[i] = oksids[t[t.length() - i - 1] - '0'];
+      our_set.insert(taken_oksids[i]);
+    }
+    if (our_set.size() <= 1) {
+      std::cout << "ЕЕЕЕ ВАМ ОТМЕНИЛИ ЛАБУ!!! Удача +10: "
+                << chance_of_luck + 10 << "%" << std::endl;
+      chance_of_luck += 10;
+      return;
+    }
+    std::string result = results[my_rand() % 4];
+    std::cout << "Вы взяли ";
+    for (const auto &element : our_set)
+      std::cout << element << ", ";
+    std::cout << "смешали всё это в огромной колбе, и " << result << ", что";
+    int liked_or_disliked = my_rand() % 2;
+    if (liked_or_disliked == 0) {
+      std::cout << "очень понравилось " << teacher_name << ", и теперь у вас "
+                << chance_of_luck + 10 << "% удачи" << std::endl;
+      chance_of_luck += 10;
+    } else {
+      std::cout << "максимально не понравилось " << teacher_name
+                << ", и теперь у вас " << chance_of_luck - 10 << "% удачи"
+                << std::endl;
+      chance_of_luck -= 10;
+    }
+  }
+
+private:
+  std::string *oksids =
+      new std::string[10]{"серную кислоту",    "изопропиловый спирт",
+                          "гидроксид натрия",  "азотную кислоту",
+                          "перекись водорода", "катализатор",
+                          "блёстки",           "воду",
+                          "оксид железа",      "какою-то щелочь"};
+  std::string *results =
+      new std::string[4]{"всё взорвалось", "выпал осадок",
+                         "реакция не произошла", "мешанина поменяла цвет"};
+};
+
+class Linal : public Language {
+public:
+  Linal(std::string name, std::string teacher_name, int longliness_in_minutes,
+        int chance_of_luck)
+      : Language(name, teacher_name, longliness_in_minutes, chance_of_luck) {
+    themes =
+        new std::string[4]{"СЛАУ", "Метод Гаусса", "Замена базиса в ЛП", "ЛПП"};
+  }
+  void exam() {
+    int value = my_rand();
+    std::cout << value << std::endl;
+    std::cout << "Вы пришли на экзамен по линалу. Вы достались "
+              << examinators[(value % 10) % 4];
+    if (examinators[(value % 10) % 4] == "Умнову") {
+      std::cout << ". Поднимем щиты за королеву и пожелаем удачи... "
+                   "Вероятность удачи понижается до 15%";
+      chance_of_luck = 15;
+    }
+    if (examinators[(value % 10) % 4] == "Кузнецову") {
+      std::cout << ". Поздравляем с уже почти сданным экзаменом! Вероятность "
+                   "удачи повышается до 90%";
+    }
+    std::cout << std::endl;
+    std::string st = std::to_string(value);
+    std::cout << "Вы получаете билет " << (int)((value % 100) / 10)
+              << ". Он состоит из теоретического вопроса по теме "
+              << themes[(int)((value % 1000) / 100) % 4] << " и задачи по "
+              << themes[(int)((value % 10000) / 1000) % 4] << std::endl;
+    int theor_result =
+        chance_of_luck * ((st[4] - '0') * 10 + (st[5] - '0')) % 100 * 1.3;
+    std::cout << theor_result << std::endl;
+    int task_result =
+        chance_of_luck * ((st[6] - '0') * 10 + (st[7] - '0')) % 100 * 1.3;
+    int anti_result = 0;
+    if (theor_result > chance_of_luck) {
+      std::cout << "Вы провалились в теории..."
+                << examinators_[(value % 10) % 4] << " недоволен." << std::endl;
+      anti_result++;
+    } else {
+      std::cout << "Вы успешно ответили теорию!" << std::endl;
+    }
+    if (task_result > chance_of_luck) {
+      std::cout << "Вы провалились в задаче..."
+                << examinators_[(value % 10) % 4] << " недоволен." << std::endl;
+      anti_result++;
+    } else {
+      std::cout << "Вы успешно решили задачу!" << std::endl;
+    }
+    if (anti_result == 2) {
+      std::cout << "К сожалению, Вы не смогли сдать экзамен. Вас будут ждать "
+                   "на пересдаче"
+                << std::endl;
+      return;
+    }
+    if (anti_result == 1) {
+      std::cout
+          << "Несмотря на совершенные ошибки, экзаменатор остался доволен "
+             "Вами, и поставил удос. Поздравляем со сдачей экзамена!"
+          << std::endl;
+      return;
+    }
+    std::cout << "Поздравляем Вас с отлом! Терешин очень горд Вами!"
+              << std::endl;
+  }
+
+protected:
+  std::string *examinators =
+      new std::string[4]{"Умнову", "Терешину", "Кузнецову", "Голубеву"};
+  std::string *examinators_ =
+      new std::string[4]{"Умнов", "Терешин", "Кузнецов", "Голубев"};
 };
 
 int main() {
@@ -175,9 +303,20 @@ first_one.print();
   fizra.print();*/
 
   //проверка Chemistry
-  std::string *themes_3 = new std::string[2]{"хим связи", "строение атома"};
-  Chemistry chem("Неорганика", "бабуля", 90, themes_3, 3);
+  /*Chemistry chem("Неорганика", "бабуля", 90, 40);
   chem.set_necessary_visits(6);
   chem.visit_class();
   chem.test("строение атома");
+  chem.laba();*/
+
+  //проверка Language
+  /*Language english("Английский", "Наталья Леонидовна", 180, 80);
+  english.add_theme("Past simple");
+  english.add_theme("Present Continuous");
+  english.test("writing");
+  english.test("Past simple");*/
+
+  //проверка Linal
+  Linal lin("Линал", "Терешка", 180, 75);
+  lin.exam();
 }
