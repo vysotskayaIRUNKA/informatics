@@ -1,6 +1,11 @@
 #include <ctime>
 #include <iostream>
-#include <random>
+
+int my_rand() {
+  time_t seed;
+  time(&seed);
+  return (int)seed;
+}
 
 class Subject {
 public:
@@ -62,32 +67,40 @@ public:
      std::string mood)
       : Subject(name, teacher_name, longliness_in_minutes, chance_of_luck,
                 themes, number_of_themes) {
+    if (mood != "awful" && mood != "neutral" && mood != "normal" &&
+        mood != "wonderful") {
+      std::cout << "Error: mood cannot be " << mood << std::endl;
+      return;
+    }
     this->mood = mood;
   }
   void set_necessary_visits(int num) { this->necessary_visits = num; }
   void mood_after_lesson() {
-    int value = random();
-    int ost = value - (int)(value / 4);
-    if (ost == 0) {
+    int value = my_rand();
+    std::cout << value << " " << value % 4 << std::endl;
+    if (value % 4 == 0) {
       mood = "awful";
     };
-    if (ost == 1) {
+    if (value % 4 == 1) {
       mood = "neutral";
     }
-    if (ost == 2) {
+    if (value % 4 == 2) {
       this->mood = "normal";
     }
-    if (ost == 3) {
+    if (value % 4 == 3) {
       this->mood = "wonderful";
     }
     std::cout << mood << std::endl;
   }
-  void visit_class() { my_visits++; }
+  void visit_class() {
+    my_visits++;
+    std::cout << "Great! You visited class! Now you have visited " << my_visits
+              << " classes" << std::endl;
+  }
   void mb_skip() {
     if (my_visits < 0.9 * necessary_visits && chance_of_luck < 20) {
       std::cout << "It's bad idea, you have only " << my_visits << " visits"
                 << std::endl;
-      visit_class();
     } else {
       chance_of_luck -= 5;
       std::cout << "OK, you may skip today" << std::endl;
@@ -98,6 +111,43 @@ protected:
   int necessary_visits = 25;
   int my_visits = 0;
   std::string mood = "neutral"; //могут быть awful, neutral, normal, wonderful
+};
+
+class Chemistry : public PE {
+public:
+  Chemistry(std::string name, std::string teacher_name,
+            int longliness_in_minutes, std::string *themes,
+            int number_of_themes)
+      : PE(name, teacher_name, longliness_in_minutes, 40, themes,
+           number_of_themes, "awful") {}
+  void test(std::string t) {
+    int value = my_rand();
+    int prokatit = value % 100;
+    for (int i = 0; i < number_of_themes; i++) {
+      if (themes[i] == t) {
+        if (prokatit > chance_of_luck) {
+          std::cout << "На контрольной тебе не повезло. ";
+          if (prokatit % 10 > chance_of_luck) {
+            std::cout << "Теперь у тебя незачёт по " << name << std::endl;
+            return;
+          }
+          chance_of_luck -= prokatit % 10;
+          std::cout << "Теперь процент твоей удачи: " << chance_of_luck << "%"
+                    << std::endl;
+          return;
+        }
+        chance_of_luck += prokatit % 10;
+        std::cout << "Ты успешно написал контрольную по " << t
+                  << "!. Теперь твой процент удачи: " << chance_of_luck << "%"
+                  << std::endl;
+        return;
+      }
+    }
+    std::cout << "Ты вообще впервые слышишь о теме сегодняшней контрольной и "
+                 "ты завалил её. Теперь твой процент удачи "
+              << chance_of_luck - prokatit % 10 << "%" << std::endl;
+    chance_of_luck -= prokatit % 10;
+  }
 };
 
 int main() {
@@ -112,12 +162,22 @@ first_one.print();
   */
 
   //проверка PE
-  std::string *themes_2 =
+  /*std::string *themes_2 =
       new std::string[4]{"легкая атлетика", "бассейн", "зал", "коньки"};
   PE fizra("ОФП женские группы", "Юрова", 80, 100, themes_2, 4, "wonderful");
   fizra.mood_after_lesson();
   fizra.print();
   fizra.visit_class();
-  fizra.mb_skip();
-  fizra.print();
+  for (int i = 0; i < 25; i++) {
+    fizra.mb_skip();
+  }
+  fizra.visit_class();
+  fizra.print();*/
+
+  //проверка Chemistry
+  std::string *themes_3 = new std::string[2]{"хим связи", "строение атома"};
+  Chemistry chem("Неорганика", "бабуля", 90, themes_3, 3);
+  chem.set_necessary_visits(6);
+  chem.visit_class();
+  chem.test("строение атома");
 }
