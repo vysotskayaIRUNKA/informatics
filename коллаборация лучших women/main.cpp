@@ -490,355 +490,465 @@ protected:
 
 class VCP : public Informatics {
 public:
-	VCP(std::string name, std::string teacher_name, int longliness_in_minutes,
-	    int chance_of_luck)
-	  : Informatics(name, teacher_name, longliness_in_minutes, chance_of_luck,
-	                themes, number_of_themes)
-	{
-		// Переопределяем темы для инженерной практики
-		delete[] this->themes; // Освобождаем старый массив тем
-		this->number_of_themes = 5;
-		this->themes =
-		  new std::string[number_of_themes]{"3D-моделирование в Solidworks",
-		                                    "Схемотехника и Arduino", "3D-печать",
-		                                    "Работа с лазерным станком",
-		                                    "Пайка и монтаж электроники"};
+  VCP(std::string name, std::string teacher_name, int longliness_in_minutes,
+      int chance_of_luck)
+      : Informatics(name, teacher_name, longliness_in_minutes, chance_of_luck,
+                    nullptr, 0) { // Передаем nullptr и 0
+    // Теперь создаем свой массив тем
+    this->number_of_themes = 5;
+    this->themes = new std::string[number_of_themes]{
+        "3D-моделирование в Solidworks", "Схемотехника и Arduino", "3D-печать",
+        "Работа с лазерным станком", "Пайка и монтаж электроники"};
 
-		// Специфичные поля для инженерной практики
-		this->project_stage = 0; // 0-5 этапов проекта
-		this->tools_mastered = 0;
-		this->total_tools = 5;
-		this->current_device = "";
-		this->broken_tools = 0;
-		this->has_soldering_experience = false;
-	}
+    // Инициализация остальных полей
+    this->project_stage = 0;
+    this->tools_mastered = 0;
+    this->total_tools = 5;
+    this->current_device = "";
+    this->broken_tools = 0;
+    this->has_soldering_experience = false;
+  }
 
-	// Метод для работы над проектом
-	void work_on_project(std::string device_name)
-	{
-		if (project_stage == 0) {
-			current_device = device_name;
-			std::cout << "Вы начинаете работу над устройством: " << current_device
-			          << std::endl;
-			std::cout << "Этап 1/5: Проектирование в Solidworks..." << std::endl;
+  // Метод для работы над проектом
+  void work_on_project(std::string device_name) {
+    if (project_stage == 0) {
+      current_device = device_name;
+      std::cout << "Вы начинаете работу над устройством: " << current_device
+                << std::endl;
+      std::cout << "Этап 1/5: Проектирование в Solidworks..." << std::endl;
 
-			int value = my_rand();
-			if (value % 100 < chance_of_luck) {
-				std::cout << "Чертеж получился отличный! Можно печатать детали."
-				          << std::endl;
-				project_stage = 1;
-				chance_of_luck += 5;
-			}
-			else {
-				std::cout << "Ошибка в чертеже! Придется переделывать." << std::endl;
-				chance_of_luck -= 3;
-			}
-		}
-		else {
-			std::cout << "Вы уже работаете над устройством " << current_device
-			          << std::endl;
-		}
-	}
+      int value = my_rand();
+      if (value % 100 < chance_of_luck) {
+        std::cout << "Чертеж получился отличный! Можно печатать детали."
+                  << std::endl;
+        project_stage = 1;
+        chance_of_luck += 5;
+      } else {
+        std::cout << "Ошибка в чертеже! Придется переделывать." << std::endl;
+        chance_of_luck -= 3;
+      }
+    } else {
+      std::cout << "Вы уже работаете над устройством " << current_device
+                << std::endl;
+    }
+  }
 
-	// Метод для 3D-печати деталей
-	void print_details()
-	{
-		if (project_stage < 1) {
-			std::cout << "Сначала нужно сделать чертеж!" << std::endl;
-			return;
-		}
+  // Метод для 3D-печати деталей
+  void print_details() {
+    if (project_stage < 1) {
+      std::cout << "Сначала нужно сделать чертеж!" << std::endl;
+      return;
+    }
 
-		if (project_stage >= 2) {
-			std::cout << "Детали уже напечатаны!" << std::endl;
-			return;
-		}
+    if (project_stage >= 2) {
+      std::cout << "Детали уже напечатаны!" << std::endl;
+      return;
+    }
 
-		std::cout << "Запускаем 3D-принтер для печати деталей..." << std::endl;
+    std::cout << "Запускаем 3D-принтер для печати деталей..." << std::endl;
 
-		int value = my_rand();
-		if (value % 10 == 0) {
-			std::cout << "О нет! Принтер зажевал пластик! Теряете время на ремонт."
-			          << std::endl;
-			tools_mastered += 0; // Не увеличиваем
-			broken_tools++;
-		}
-		else if (value % 5 == 0) {
-			std::cout << "Детали напечатались криво. Может быть, пригодится?"
-			          << std::endl;
-			chance_of_luck -= 2;
-			project_stage = 2;
-		}
-		else {
-			std::cout << "Детали напечатаны идеально! Можно собирать." << std::endl;
-			tools_mastered++;
-			chance_of_luck += 5;
-			project_stage = 2;
-		}
+    int value = my_rand();
+    if (value % 10 == 0) {
+      std::cout << "О нет! Принтер зажевал пластик! Теряете время на ремонт."
+                << std::endl;
+      tools_mastered += 0; // Не увеличиваем
+      broken_tools++;
+    } else if (value % 5 == 0) {
+      std::cout << "Детали напечатались криво. Может быть, пригодится?"
+                << std::endl;
+      chance_of_luck -= 2;
+      project_stage = 2;
+    } else {
+      std::cout << "Детали напечатаны идеально! Можно собирать." << std::endl;
+      tools_mastered++;
+      chance_of_luck += 5;
+      project_stage = 2;
+    }
 
-		std::cout << "Освоено инструментов: " << tools_mastered << "/"
-		          << total_tools << std::endl;
-	}
+    std::cout << "Освоено инструментов: " << tools_mastered << "/"
+              << total_tools << std::endl;
+  }
 
-	// Метод для пайки электроники
-	void soldering()
-	{
-		if (project_stage < 2) {
-			std::cout << "Сначала нужно напечатать детали!" << std::endl;
-			return;
-		}
+  // Метод для пайки электроники
+  void soldering() {
+    if (project_stage < 2) {
+      std::cout << "Сначала нужно напечатать детали!" << std::endl;
+      return;
+    }
 
-		if (project_stage >= 3) {
-			std::cout << "Пайка уже выполнена!" << std::endl;
-			return;
-		}
+    if (project_stage >= 3) {
+      std::cout << "Пайка уже выполнена!" << std::endl;
+      return;
+    }
 
-		std::cout << "Берем паяльник и начинаем паять плату..." << std::endl;
+    std::cout << "Берем паяльник и начинаем паять плату..." << std::endl;
 
-		if (!has_soldering_experience) {
-			std::cout << "Вы впервые держите паяльник! Это может быть опасно..."
-			          << std::endl;
-		}
+    if (!has_soldering_experience) {
+      std::cout << "Вы впервые держите паяльник! Это может быть опасно..."
+                << std::endl;
+    }
 
-		int value = my_rand();
+    int value = my_rand();
 
-		if (value % 20 == 0) {
-			std::cout << "АЙ! Обожгли палец! Больно, но жить можно." << std::endl;
-			chance_of_luck -= 5;
-		}
-		else if (value % 15 == 0) {
-			std::cout << "Вы перегрели микросхему и она сгорела. Нужно купить новую."
-			          << std::endl;
-			chance_of_luck -= 10;
-			broken_tools++;
-		}
-		else if (value % 10 == 0 && !has_soldering_experience) {
-			std::cout << "Неожиданно хорошо! Видимо, у вас талант к пайке!"
-			          << std::endl;
-			has_soldering_experience = true;
-			chance_of_luck += 15;
-			project_stage = 3;
-			tools_mastered++;
-		}
-		else if (value % 100 < chance_of_luck) {
-			std::cout << "Пайка прошла отлично! Контакты надежные." << std::endl;
-			has_soldering_experience = true;
-			chance_of_luck += 8;
-			project_stage = 3;
-			tools_mastered++;
-		}
-		else {
-			std::cout << "Пайка получилась так себе, но работать будет." << std::endl;
-			chance_of_luck -= 2;
-			project_stage = 3;
-		}
+    if (value % 20 == 0) {
+      std::cout << "АЙ! Обожгли палец! Больно, но жить можно." << std::endl;
+      chance_of_luck -= 5;
+    } else if (value % 15 == 0) {
+      std::cout << "Вы перегрели микросхему и она сгорела. Нужно купить новую."
+                << std::endl;
+      chance_of_luck -= 10;
+      broken_tools++;
+    } else if (value % 10 == 0 && !has_soldering_experience) {
+      std::cout << "Неожиданно хорошо! Видимо, у вас талант к пайке!"
+                << std::endl;
+      has_soldering_experience = true;
+      chance_of_luck += 15;
+      project_stage = 3;
+      tools_mastered++;
+    } else if (value % 100 < chance_of_luck) {
+      std::cout << "Пайка прошла отлично! Контакты надежные." << std::endl;
+      has_soldering_experience = true;
+      chance_of_luck += 8;
+      project_stage = 3;
+      tools_mastered++;
+    } else {
+      std::cout << "Пайка получилась так себе, но работать будет." << std::endl;
+      chance_of_luck -= 2;
+      project_stage = 3;
+    }
 
-		std::cout << "Ваш опыт пайки: "
-		          << (has_soldering_experience ? "Есть" : "Нет") << std::endl;
-	}
+    std::cout << "Ваш опыт пайки: "
+              << (has_soldering_experience ? "Есть" : "Нет") << std::endl;
+  }
 
-	// Метод для программирования Arduino
-	void program_arduino()
-	{
-		if (project_stage < 3) {
-			std::cout << "Сначала соберите устройство!" << std::endl;
-			return;
-		}
+  // Метод для программирования Arduino
+  void program_arduino() {
+    if (project_stage < 3) {
+      std::cout << "Сначала соберите устройство!" << std::endl;
+      return;
+    }
 
-		if (project_stage >= 4) {
-			std::cout << "Код уже залит!" << std::endl;
-			return;
-		}
+    if (project_stage >= 4) {
+      std::cout << "Код уже залит!" << std::endl;
+      return;
+    }
 
-		std::cout << "Пишем код для Arduino в Arduino IDE..." << std::endl;
+    std::cout << "Пишем код для Arduino в Arduino IDE..." << std::endl;
 
-		// Используем опыт из Informatics (лабораторные работы)
-		if (code_completed > 5) {
-			std::cout << "Опыт программирования помогает писать код быстрее!"
-			          << std::endl;
-			chance_of_luck += 10;
-		}
+    // Используем опыт из Informatics (лабораторные работы)
+    if (code_completed > 5) {
+      std::cout << "Опыт программирования помогает писать код быстрее!"
+                << std::endl;
+      chance_of_luck += 10;
+    }
 
-		int value = my_rand();
-		int bugs = (value / 100) % 10;
+    int value = my_rand();
+    int bugs = (value / 100) % 10;
 
-		std::cout << "Написали код. Компиляция..." << std::endl;
+    std::cout << "Написали код. Компиляция..." << std::endl;
 
-		if (bugs > 7) {
-			std::cout << "ОШИБКА! В коде куча синтаксических ошибок!" << std::endl;
-			std::cout << "Придется переписывать заново." << std::endl;
-			chance_of_luck -= 15;
-		}
-		else if (bugs > 4) {
-			std::cout << "Код компилируется, но есть предупреждения." << std::endl;
-			std::cout << "Заливаем на плату... Работает через раз." << std::endl;
-			chance_of_luck -= 3;
-			project_stage = 4;
-		}
-		else {
-			std::cout << "Код идеален! Заливаем на плату... ВСЕ РАБОТАЕТ!"
-			          << std::endl;
-			chance_of_luck += 12;
-			project_stage = 4;
-			tools_mastered++;
-		}
-	}
+    if (bugs > 7) {
+      std::cout << "ОШИБКА! В коде куча синтаксических ошибок!" << std::endl;
+      std::cout << "Придется переписывать заново." << std::endl;
+      chance_of_luck -= 15;
+    } else if (bugs > 4) {
+      std::cout << "Код компилируется, но есть предупреждения." << std::endl;
+      std::cout << "Заливаем на плату... Работает через раз." << std::endl;
+      chance_of_luck -= 3;
+      project_stage = 4;
+    } else {
+      std::cout << "Код идеален! Заливаем на плату... ВСЕ РАБОТАЕТ!"
+                << std::endl;
+      chance_of_luck += 12;
+      project_stage = 4;
+      tools_mastered++;
+    }
+  }
 
-	// Метод для тестирования устройства
-	void test_device()
-	{
-		if (project_stage < 4) {
-			std::cout << "Устройство еще не готово к тестированию!" << std::endl;
-			return;
-		}
+  // Метод для тестирования устройства
+  void test_device() {
+    if (project_stage < 4) {
+      std::cout << "Устройство еще не готово к тестированию!" << std::endl;
+      return;
+    }
 
-		if (project_stage >= 5) {
-			std::cout << "Устройство уже протестировано и работает!" << std::endl;
-			return;
-		}
+    if (project_stage >= 5) {
+      std::cout << "Устройство уже протестировано и работает!" << std::endl;
+      return;
+    }
 
-		std::cout << "Включаем " << current_device << " для тестирования..."
-		          << std::endl;
+    std::cout << "Включаем " << current_device << " для тестирования..."
+              << std::endl;
 
-		int value = my_rand();
+    int value = my_rand();
 
-		if (broken_tools > 2) {
-			std::cout << "Из-за сломанных инструментов устройство работает "
-			             "некорректно."
-			          << std::endl;
-			std::cout << "Придется переделывать с нуля." << std::endl;
-			project_stage = 0; // Начинаем заново
-			chance_of_luck -= 25;
-			return;
-		}
+    if (broken_tools > 2) {
+      std::cout
+          << "Из-за сломанных инструментов устройство работает некорректно."
+          << std::endl;
+      std::cout << "Придется переделывать с нуля." << std::endl;
+      project_stage = 0; // Начинаем заново
+      chance_of_luck -= 25;
+      return;
+    }
 
-		if (value % 100 < chance_of_luck) {
-			std::cout << "УРА! Устройство работает идеально! Защита проекта на 5!"
-			          << std::endl;
-			std::cout << "Преподаватель " << teacher_name << " очень доволен!"
-			          << std::endl;
-			chance_of_luck += 30;
-			project_stage = 5;
-		}
-		else if (value % 50 < chance_of_luck) {
-			std::cout << "Устройство работает, но нестабильно. Тройка за проект."
-			          << std::endl;
-			chance_of_luck += 5;
-			project_stage = 5;
-		}
-		else {
-			std::cout << "Устройство не работает... Что-то пошло не так."
-			          << std::endl;
-			std::cout << "Попробуйте отладить снова." << std::endl;
-			chance_of_luck -= 10;
-			project_stage = 3; // Откатываемся к этапу отладки
-		}
-	}
+    if (value % 100 < chance_of_luck) {
+      std::cout << "УРА! Устройство работает идеально! Защита проекта на 5!"
+                << std::endl;
+      std::cout << "Преподаватель " << teacher_name << " очень доволен!"
+                << std::endl;
+      chance_of_luck += 30;
+      project_stage = 5;
+    } else if (value % 50 < chance_of_luck) {
+      std::cout << "Устройство работает, но нестабильно. Тройка за проект."
+                << std::endl;
+      chance_of_luck += 5;
+      project_stage = 5;
+    } else {
+      std::cout << "Устройство не работает... Что-то пошло не так."
+                << std::endl;
+      std::cout << "Попробуйте отладить снова." << std::endl;
+      chance_of_luck -= 10;
+      project_stage = 3; // Откатываемся к этапу отладки
+    }
+  }
 
-	// Метод для участия в инженерном конкурсе
-	void engineering_competition()
-	{
-		std::cout << "\n*** ИНЖЕНЕРНЫЙ КОНКУРС ***" << std::endl;
-		std::cout << "Вы представляете свой проект: " << current_device
-		          << std::endl;
+  // Метод для участия в инженерном конкурсе
+  void engineering_competition() {
+    std::cout << "\n*** ИНЖЕНЕРНЫЙ КОНКУРС ***" << std::endl;
+    std::cout << "Вы представляете свой проект: " << current_device
+              << std::endl;
 
-		if (project_stage < 5) {
-			std::cout << "Но проект еще не готов! Приходится показывать сырой "
-			             "прототип."
-			          << std::endl;
-		}
+    if (project_stage < 5) {
+      std::cout
+          << "Но проект еще не готов! Приходится показывать сырой прототип."
+          << std::endl;
+    }
 
-		int value = my_rand();
-		int jury_score =
-		  (tools_mastered * 20) + (code_completed * 5) + (chance_of_luck / 10);
+    int value = my_rand();
+    int jury_score =
+        (tools_mastered * 20) + (code_completed * 5) + (chance_of_luck / 10);
 
-		std::cout << "Оценка жюри: " << jury_score << " баллов" << std::endl;
+    std::cout << "Оценка жюри: " << jury_score << " баллов" << std::endl;
 
-		if (jury_score > 80) {
-			std::cout << "ГРАН-ПРИ! Вы выиграли главный приз - 3D-принтер!"
-			          << std::endl;
-			tools_mastered++;
-			chance_of_luck += 50;
-		}
-		else if (jury_score > 60) {
-			std::cout << "Второе место! Вы получаете набор отверток и паяльник."
-			          << std::endl;
-			tools_mastered++;
-			chance_of_luck += 25;
-		}
-		else if (jury_score > 40) {
-			std::cout << "Третье место! Вам дарят книгу по Arduino." << std::endl;
-			chance_of_luck += 10;
-		}
-		else {
-			std::cout << "Участие без победы. Но опыт бесценен!" << std::endl;
-			chance_of_luck += 5;
-		}
-	}
+    if (jury_score > 80) {
+      std::cout << "ГРАН-ПРИ! Вы выиграли главный приз - 3D-принтер!"
+                << std::endl;
+      tools_mastered++;
+      chance_of_luck += 50;
+    } else if (jury_score > 60) {
+      std::cout << "Второе место! Вы получаете набор отверток и паяльник."
+                << std::endl;
+      tools_mastered++;
+      chance_of_luck += 25;
+    } else if (jury_score > 40) {
+      std::cout << "Третье место! Вам дарят книгу по Arduino." << std::endl;
+      chance_of_luck += 10;
+    } else {
+      std::cout << "Участие без победы. Но опыт бесценен!" << std::endl;
+      chance_of_luck += 5;
+    }
+  }
 
-	// Метод для ремонта сломанных инструментов
-	void repair_tools()
-	{
-		if (broken_tools == 0) {
-			std::cout << "Все инструменты в порядке!" << std::endl;
-			return;
-		}
+  // Метод для ремонта сломанных инструментов
+  void repair_tools() {
+    if (broken_tools == 0) {
+      std::cout << "Все инструменты в порядке!" << std::endl;
+      return;
+    }
 
-		std::cout << "Чиним сломанные инструменты..." << std::endl;
+    std::cout << "Чиним сломанные инструменты..." << std::endl;
 
-		int value = my_rand();
-		if (value % 100 < chance_of_luck) {
-			std::cout << "Успешно починили " << broken_tools << " инструментов!"
-			          << std::endl;
-			broken_tools = 0;
-			chance_of_luck += 10;
-		}
-		else {
-			std::cout << "Неудачный ремонт, инструменты окончательно сломались."
-			          << std::endl;
-			std::cout << "Придется покупать новые." << std::endl;
-			broken_tools = 0;
-			total_tools--;
-			chance_of_luck -= 15;
-		}
-	}
+    int value = my_rand();
+    if (value % 100 < chance_of_luck) {
+      std::cout << "Успешно починили " << broken_tools << " инструментов!"
+                << std::endl;
+      broken_tools = 0;
+      chance_of_luck += 10;
+    } else {
+      std::cout << "Неудачный ремонт, инструменты окончательно сломались."
+                << std::endl;
+      std::cout << "Придется покупать новые." << std::endl;
+      broken_tools = 0;
+      total_tools--;
+      chance_of_luck -= 15;
+    }
+  }
 
-	// Переопределяем метод print
-	void print()
-	{
-		Subject::print(); // Вызов метода Subject (обходим Informatics)
-		std::cout << "=== Инженерная практика ===" << std::endl;
-		std::cout << "Текущее устройство: "
-		          << (current_device.empty() ? "не выбрано" : current_device)
-		          << std::endl;
-		std::cout << "Этап проекта: " << project_stage << "/5" << std::endl;
-		std::cout << "Освоено инструментов: " << tools_mastered << "/"
-		          << total_tools << std::endl;
-		std::cout << "Сломано инструментов: " << broken_tools << std::endl;
-		std::cout << "Опыт пайки: " << (has_soldering_experience ? "есть" : "нет")
-		          << std::endl;
+  // Переопределяем метод print
+  void print() {
+    Subject::print(); // Вызов метода Subject (обходим Informatics)
+    std::cout << "=== Инженерная практика ===" << std::endl;
+    std::cout << "Текущее устройство: "
+              << (current_device.empty() ? "не выбрано" : current_device)
+              << std::endl;
+    std::cout << "Этап проекта: " << project_stage << "/5" << std::endl;
+    std::cout << "Освоено инструментов: " << tools_mastered << "/"
+              << total_tools << std::endl;
+    std::cout << "Сломано инструментов: " << broken_tools << std::endl;
+    std::cout << "Опыт пайки: " << (has_soldering_experience ? "есть" : "нет")
+              << std::endl;
 
-		// Показываем прогресс по этапам
-		std::cout << "Прогресс: ";
-		if (project_stage >= 1)
-			std::cout << "[Проект] ";
-		if (project_stage >= 2)
-			std::cout << "[Печать] ";
-		if (project_stage >= 3)
-			std::cout << "[Пайка] ";
-		if (project_stage >= 4)
-			std::cout << "[Код] ";
-		if (project_stage >= 5)
-			std::cout << "[Готово]";
-		std::cout << std::endl;
-	}
+    // Показываем прогресс по этапам
+    std::cout << "Прогресс: ";
+    if (project_stage >= 1)
+      std::cout << "[Проект] ";
+    if (project_stage >= 2)
+      std::cout << "[Печать] ";
+    if (project_stage >= 3)
+      std::cout << "[Пайка] ";
+    if (project_stage >= 4)
+      std::cout << "[Код] ";
+    if (project_stage >= 5)
+      std::cout << "[Готово]";
+    std::cout << std::endl;
+  }
 
 protected:
-	int project_stage;             // Этап проекта (0-5)
-	int tools_mastered;            // Освоенные инструменты
-	int total_tools;               // Всего инструментов
-	std::string current_device;    // Текущее устройство
-	int broken_tools;              // Сломанные инструменты
-	bool has_soldering_experience; // Опыт пайки
+  int project_stage;             // Этап проекта (0-5)
+  int tools_mastered;            // Освоенные инструменты
+  int total_tools;               // Всего инструментов
+  std::string current_device;    // Текущее устройство
+  int broken_tools;              // Сломанные инструменты
+  bool has_soldering_experience; // Опыт пайки
+};
+
+class EngineeringTraining : public Informatics {
+public:
+  EngineeringTraining(std::string name, std::string teacher_name,
+                      int longliness_in_minutes, int chance_of_luck)
+      : Informatics(name, teacher_name, longliness_in_minutes, chance_of_luck,
+                    nullptr, 0) { // ВАЖНО: передаем nullptr и 0
+
+    // Создаем новый массив тем
+    this->number_of_themes = 5;
+    this->themes = new std::string[number_of_themes]{
+        "GitHub", "АЦП", "ЦАП", "Текстовый редактор", "Пайка"};
+
+    // Инициализация всех полей
+    this->project_stage = 0;
+    this->number_of_questions = 0;
+    this->solved_problems = 0;
+    this->independently_resolved_issues = 0;
+    this->current_project = ""; // Важно инициализировать!
+    this->code_completed = 0;   // Из Informatics
+    this->total_code = 8;       // Из Informatics
+  }
+
+  void choose_a_topic(int number) {
+    if (themes == nullptr) {
+      std::cout << "Ошибка: темы не инициализированы!" << std::endl;
+      return;
+    }
+
+    if (number >= 1 && number <= this->number_of_themes) {
+      std::cout << "Сейчас вы можете делать задания по теме: "
+                << this->themes[number - 1] << std::endl;
+      this->current_project = this->themes[number - 1];
+    } else {
+      std::cout << "Такого проекта нет! Доступны темы с 1 по "
+                << this->number_of_themes << std::endl;
+    }
+  }
+
+  void do_the_task() {
+    if (current_project.empty()) {
+      std::cout << "Сначала выберите тему! Используйте choose_a_topic()"
+                << std::endl;
+      return;
+    }
+
+    int value = my_rand();
+    std::cout << "Пытаемся выполнить задание по теме \"" << current_project
+              << "\"... ";
+
+    if (value % 100 < chance_of_luck) {
+      std::cout << "Успешно!" << std::endl;
+      project_stage = 1;
+      chance_of_luck += 5;
+    } else {
+      std::cout << "Ошибка! Придется задать вопрос." << std::endl;
+      chance_of_luck -= 3;
+      this->solved_problems += 1;
+    }
+
+    std::cout << "Текущий шанс удачи: " << chance_of_luck
+              << "%, проблем: " << solved_problems << std::endl;
+  }
+
+  void ask_a_question() {
+    if (this->solved_problems == 0) {
+      std::cout << "У вас нет вопросов!" << std::endl;
+      return;
+    }
+
+    int value = my_rand();
+    std::cout << "Задаем вопрос по теме \"" << current_project << "\"... ";
+
+    if (value % 100 < chance_of_luck) {
+      std::cout << "Вам помогли!" << std::endl;
+      this->solved_problems -= 1;
+      chance_of_luck += 6;
+    } else {
+      std::cout << "Вам сказали решить вопрос самостоятельно." << std::endl;
+      // chance_of_luck -= 0; // можно убрать эту строку
+    }
+
+    std::cout << "Осталось проблем: " << solved_problems
+              << ", шанс удачи: " << chance_of_luck << "%" << std::endl;
+  }
+
+  void solve_the_problem_yourself() {
+    if (this->solved_problems == 0) {
+      std::cout << "У вас нет вопросов!" << std::endl;
+      return;
+    }
+
+    int value = my_rand();
+    std::cout << "Пытаемся решить проблему самостоятельно по теме \""
+              << current_project << "\"... ";
+
+    if (value % 100 < chance_of_luck) {
+      std::cout << "Успешно решили!" << std::endl;
+      this->solved_problems -= 1;
+      chance_of_luck += 10;
+      this->independently_resolved_issues++;
+    } else {
+      std::cout << "Проблему решить не удалось, попробуйте еще раз."
+                << std::endl;
+      // chance_of_luck -= 0; // можно убрать эту строку
+    }
+
+    std::cout << "Осталось проблем: " << solved_problems
+              << ", самостоятельно решено: " << independently_resolved_issues
+              << ", шанс удачи: " << chance_of_luck << "%" << std::endl;
+  }
+
+  // Переопределяем метод print для отображения специфичной информации
+  void print() {
+    Subject::print(); // Вызов метода родительского класса
+
+    std::cout << "=== Engineering Training ===" << std::endl;
+    std::cout << "Текущая тема: "
+              << (current_project.empty() ? "не выбрана" : current_project)
+              << std::endl;
+    std::cout << "Этап проекта: " << project_stage << "/5" << std::endl;
+    std::cout << "Нерешенных проблем: " << solved_problems << std::endl;
+    std::cout << "Самостоятельно решено: " << independently_resolved_issues
+              << std::endl;
+
+    // Выводим доступные темы
+    std::cout << "Доступные темы:" << std::endl;
+    for (int i = 0; i < number_of_themes; i++) {
+      std::cout << "  " << (i + 1) << ". " << themes[i] << std::endl;
+    }
+  }
+
+protected:
+  int project_stage;
+  int number_of_questions;
+  int solved_problems;
+  int independently_resolved_issues;
 };
 
 int main()
@@ -879,122 +989,210 @@ int main()
 	lin.exam();
 
 	// Проверка класса Informatics
-	std::cout << "\n========== ТЕСТИРОВАНИЕ INFORMATICS ==========\n"
-	          << std::endl;
+	 std::cout << "\n========== ТЕСТИРОВАНИЕ INFORMATICS ==========\n"
+            << std::endl;
 
-	// Создаем массив тем для информатики
-	std::string *info_themes =
-	  new std::string[4]{"Переменные и типы данных", "Условные операторы",
-	                     "Циклы", "Массивы"};
+  // Создаем массив тем для информатики
+  std::string *info_themes = new std::string[4]{
+      "Переменные и типы данных", "Условные операторы", "Циклы", "Массивы"};
 
-	Informatics programming("Программирование на C++", "Сидоров А.В.", 240, 60,
-	                        info_themes, 4);
+  Informatics programming("Программирование на C++", "Попов Н.", 240, 60,
+                          info_themes, 4);
 
-	std::cout << "--- Начальное состояние ---" << std::endl;
-	programming.preparation_for_work();
+  std::cout << "--- Начальное состояние ---" << std::endl;
+  programming.preparation_for_work();
 
-	std::cout << "\n--- Выполнение кода работ ---" << std::endl;
-	// Делаем несколько лабораторных
-	programming.do_code(1);
-	programming.do_code(2);
-	programming.do_code(3);
-	programming.do_code(1); // Повторно, для проверки
+  std::cout << "\n--- Выполнение кода работ ---" << std::endl;
+  // Делаем несколько лабораторных
+  programming.do_code(1);
+  programming.do_code(2);
+  programming.do_code(3);
+  programming.do_code(1); // Повторно, для проверки
 
-	std::cout << "\n--- Пытаемся сдать проект до завершения всех кодов ---"
-	          << std::endl;
-	programming.submit_project();
+  std::cout << "\n--- Пытаемся сдать проект до завершения всех кодов ---"
+            << std::endl;
+  programming.submit_project();
 
-	std::cout << "\n--- Завершаем оставшиеся работы ---" << std::endl;
-	for (int i = 4; i <= 8; i++) {
-		programming.do_code(i);
-	}
+  std::cout << "\n--- Завершаем оставшиеся работы ---" << std::endl;
+  for (int i = 4; i <= 8; i++) {
+    programming.do_code(i);
+  }
 
-	std::cout << "\n--- Сдаем курсовой проект ---" << std::endl;
-	programming.submit_project();
+  std::cout << "\n--- Сдаем курсовой проект ---" << std::endl;
+  programming.submit_project();
 
-	std::cout << "\n--- Участвуем в хакатоне ---" << std::endl;
-	programming.hackathon();
+  // Проверка класса VCP (Engineering Competition)
+  std::cout << "\n========== ТЕСТИРОВАНИЕ VCP ==========\n" << std::endl;
 
-	std::cout << "\n--- Итоговое состояние Informatics ---" << std::endl;
-	programming.preparation_for_work();
+  VCP engineering("Инженерная практика", "Петров И", 360, 70);
 
-	// Проверка класса VCP (Engineering Competition)
-	std::cout << "\n========== ТЕСТИРОВАНИЕ VCP ==========\n" << std::endl;
+  std::cout << "--- Начальное состояние ---" << std::endl;
+  engineering.print();
 
-	VCP engineering("Инженерная практика", "Петров И.И.", 360, 70);
+  std::cout << "\n--- Работа над проектом 'Умный светофор' ---" << std::endl;
+  engineering.work_on_project("Умный светофор");
 
-	std::cout << "--- Начальное состояние ---" << std::endl;
-	engineering.print();
+  std::cout << "\n--- 3D-печать деталей ---" << std::endl;
+  engineering.print_details();
 
-	std::cout << "\n--- Работа над проектом 'Умный светофор' ---" << std::endl;
-	engineering.work_on_project("Умный светофор");
+  std::cout << "\n--- Пайка электроники ---" << std::endl;
+  engineering.soldering();
 
-	std::cout << "\n--- 3D-печать деталей ---" << std::endl;
-	engineering.print_details();
+  std::cout << "\n--- Используем навыки из Informatics (делаем лабы) ---"
+            << std::endl;
+  // Показываем, что VCP наследует методы Informatics
+  engineering.do_code(1);
+  engineering.do_code(2);
+  engineering.do_code(3);
 
-	std::cout << "\n--- Пайка электроники ---" << std::endl;
-	engineering.soldering();
+  std::cout << "\n--- Программирование Arduino ---" << std::endl;
+  engineering.program_arduino();
 
-	std::cout << "\n--- Используем навыки из Informatics (делаем лабы) ---"
-	          << std::endl;
-	// Показываем, что VCP наследует методы Informatics
-	engineering.do_code(1);
-	engineering.do_code(2);
-	engineering.do_code(3);
+  std::cout << "\n--- Тестирование устройства ---" << std::endl;
+  engineering.test_device();
 
-	std::cout << "\n--- Программирование Arduino ---" << std::endl;
-	engineering.program_arduino();
+  std::cout << "\n--- Инженерный конкурс ---" << std::endl;
+  engineering.engineering_competition();
 
-	std::cout << "\n--- Тестирование устройства ---" << std::endl;
-	engineering.test_device();
+  std::cout << "\n--- Ремонт инструментов ---" << std::endl;
+  engineering.repair_tools();
 
-	std::cout << "\n--- Инженерный конкурс ---" << std::endl;
-	engineering.engineering_competition();
+  std::cout << "\n--- Финальное состояние VCP ---" << std::endl;
+  engineering.print();
 
-	std::cout << "\n--- Ремонт инструментов ---" << std::endl;
-	engineering.repair_tools();
+  // Дополнительный тест: создаем несколько проектов и проверяем разные сценарии
+  std::cout
+      << "\n========== ДОПОЛНИТЕЛЬНЫЙ ТЕСТ: НЕСКОЛЬКО ПРОЕКТОВ ==========\n"
+      << std::endl;
 
-	std::cout << "\n--- Финальное состояние VCP ---" << std::endl;
-	engineering.print();
+  VCP engineering2("Робототехника", "Смирнова Е.В.", 400, 50);
 
-	// Дополнительный тест: создаем несколько проектов и проверяем разные сценарии
-	std::cout << "\n========== ДОПОЛНИТЕЛЬНЫЙ ТЕСТ: НЕСКОЛЬКО ПРОЕКТОВ "
-	             "==========\n"
-	          << std::endl;
+  std::cout << "--- Проект 1: Умная теплица ---" << std::endl;
+  engineering2.work_on_project("Умная теплица");
+  engineering2.print_details();
+  engineering2.soldering();
 
-	VCP engineering2("Робототехника", "Смирнова Е.В.", 400, 50);
+  // Специально ломаем инструменты
+  std::cout << "\n--- Имитируем поломку инструментов (вызовем печать несколько "
+               "раз) ---"
+            << std::endl;
+  for (int i = 0; i < 3; i++) {
+    engineering2.print_details(); // Несколько раз для шанса поломки
+  }
 
-	std::cout << "--- Проект 1: Умная теплица ---" << std::endl;
-	engineering2.work_on_project("Умная теплица");
-	engineering2.print_details();
-	engineering2.soldering();
+  std::cout << "\n--- Пробуем починить ---" << std::endl;
+  engineering2.repair_tools();
 
-	// Специально ломаем инструменты
-	std::cout << "\n--- Имитируем поломку инструментов (вызовем печать несколько "
-	             "раз) ---"
-	          << std::endl;
-	for (int i = 0; i < 3; i++) {
-		engineering2.print_details(); // Несколько раз для шанса поломки
-	}
+  std::cout << "\n--- Продолжаем проект ---" << std::endl;
+  engineering2.program_arduino();
+  engineering2.test_device();
 
-	std::cout << "\n--- Пробуем починить ---" << std::endl;
-	engineering2.repair_tools();
+  std::cout << "\n--- Итог второго проекта ---" << std::endl;
+  engineering2.print();
 
-	std::cout << "\n--- Продолжаем проект ---" << std::endl;
-	engineering2.program_arduino();
-	engineering2.test_device();
+  std::cout << "\n========== ТЕСТИРОВАНИЕ ENGINEERING TRAINING ==========\n"
+            << std::endl;
 
-	std::cout << "\n--- Итог второго проекта ---" << std::endl;
-	engineering2.print();
+  EngineeringTraining eng_train("Инженерный практикум", "Потылицын И", 300, 65);
 
-	// Проверка взаимодействия с другими классами
-	std::cout << "\n========== ТЕСТ ВЗАИМОДЕЙСТВИЯ С ДРУГИМИ КЛАССАМИ "
-	             "==========\n"
-	          << std::endl;
+  std::cout << "--- Начальное состояние ---" << std::endl;
+  eng_train.print();
+  std::cout << "\n--- Выводим доступные темы ---" << std::endl;
 
-	// Создаем объекты разных классов
-	std::string *pe_themes = new std::string[3]{"Бег", "Плавание", "Силовые"};
-	PE physical("Физра", "Сидорова М.П.", 90, 80, pe_themes, 3, "normal");
+  std::cout << "\n--- Выбираем тему для работы ---" << std::endl;
+  eng_train.choose_a_topic(1); // Выбираем GitHub
+  eng_train.choose_a_topic(
+      10); // Несуществующая тема (проверка обработки ошибок)
+
+  std::cout << "\n--- Выполняем задание ---" << std::endl;
+  eng_train.do_the_task();
+  eng_train.do_the_task(); // Попробуем еще раз
+
+  std::cout << "\n--- Пытаемся задать вопрос (без вопросов) ---" << std::endl;
+  eng_train.ask_a_question();
+
+  std::cout << "\n--- Создаем проблемы (выполняем задания с ошибками) ---"
+            << std::endl;
+  // Несколько раз вызываем do_the_task для появления вопросов
+  for (int i = 0; i < 5; i++) {
+    std::cout << "\nПопытка " << (i + 1) << ":" << std::endl;
+    eng_train.do_the_task();
+  }
+
+  std::cout << "\n--- Задаем вопросы ---" << std::endl;
+  eng_train.ask_a_question();
+  eng_train.ask_a_question();
+
+  std::cout << "\n--- Решаем проблемы самостоятельно ---" << std::endl;
+  eng_train.solve_the_problem_yourself();
+  eng_train.solve_the_problem_yourself();
+
+  std::cout << "\n--- Пробуем разные темы ---" << std::endl;
+  eng_train.choose_a_topic(2); // АЦП
+  eng_train.do_the_task();
+  eng_train.choose_a_topic(5); // Пайка
+  eng_train.do_the_task();
+
+  std::cout << "\n--- Итоговое состояние EngineeringTraining ---" << std::endl;
+  eng_train.print();
+
+  // Проверка наследования методов от Informatics
+  std::cout << "\n--- Проверка унаследованных методов от Informatics ---"
+            << std::endl;
+  eng_train.do_code(1); // Метод из Informatics
+  eng_train.do_code(2);
+
+  std::cout << "\n--- Финальное состояние после всех операций ---" << std::endl;
+  eng_train.preparation_for_work(); // Метод из Informatics
+
+  // Дополнительный тест: создаем второй объект для проверки независимости
+  std::cout << "\n========== ДОПОЛНИТЕЛЬНЫЙ ТЕСТ: ВТОРОЙ ОБЪЕКТ ENGINEERING "
+               "TRAINING ==========\n"
+            << std::endl;
+
+  EngineeringTraining eng_train2("Схемотехника", "Александров П.Р.", 240, 50);
+
+  std::cout << "--- Начальное состояние второго объекта ---" << std::endl;
+  eng_train2.print();
+
+  std::cout << "\n--- Работа со вторым объектом ---" << std::endl;
+  eng_train2.choose_a_topic(3); // ЦАП
+  eng_train2.do_the_task();
+  eng_train2.do_the_task(); // Создаем проблему
+  eng_train2.ask_a_question();
+
+  std::cout << "\n--- Состояние второго объекта ---" << std::endl;
+  eng_train2.print();
+
+  std::cout << "\n--- Проверяем, что первый объект не изменился ---"
+            << std::endl;
+  std::cout << "Первый объект:" << std::endl;
+  eng_train.print();
+
+  // Проверка взаимодействия с другими классами
+  std::cout
+      << "\n========== ТЕСТ ВЗАИМОДЕЙСТВИЯ С ДРУГИМИ КЛАССАМИ ==========\n"
+      << std::endl;
+
+  // Создаем объекты разных классов
+  std::string *pe_themes = new std::string[3]{"Бег", "Плавание", "Силовые"};
+  PE physical("Физра", "Сидорова М.П.", 90, 80, pe_themes, 3, "normal");
+
+  Chemistry chem("Органическая химия", "Иванова Л.Д.", 120, 45);
+
+  std::cout << "--- Проверяем независимость объектов ---" << std::endl;
+  std::cout << "VCP объект:" << std::endl;
+  engineering.preparation_for_work();
+
+  std::cout << "\nPE объект:" << std::endl;
+  physical.print();
+  physical.mood_after_lesson();
+
+  std::cout << "\nChemistry объект:" << std::endl;
+  chem.add_theme("Алканы");
+  chem.print();
+  chem.laba();
+
 
 	Chemistry chem("Органическая химия", "Иванова Л.Д.", 120, 45);
 
