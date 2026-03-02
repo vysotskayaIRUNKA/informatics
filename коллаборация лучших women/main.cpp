@@ -795,13 +795,7 @@ int main()
 {
 	// проверка subject:
 	/*
-std::string *themes_1 =
-new std::string[2]{"фильм Барби", "как стать самым крутым в школе"};
-Subject first_one("первяш", "Бобчинский", 10, 50, themes_1, 2);
-first_one.increase_or_decrease_luck(-30);
-first_one.add_theme("как выжить в зомбиапокалипсисе");
-first_one.print();
-	*/
+	 */
 
 	// проверка PE
 	/*std::string *themes_2 =
@@ -966,4 +960,38 @@ first_one.print();
 	chem.add_theme("Алканы");
 	chem.print();
 	chem.laba();
+=======
+	*/
+
+	  // проверка PE
+	  /*std::string *themes_2 =
+	      new std::string[4]{"легкая атлетика", "бассейн", "зал", "коньки"};
+	  PE fizra("ОФП женские группы", "Юрова", 80, 100, themes_2, 4, "wonderful");
+	  fizra.mood_after_lesson();
+	  fizra.print();
+	  fizra.visit_class();
+	  for (int i = 0; i < 25; i++) {
+	    fizra.mb_skip();
+	  }
+	  fizra.visit_class();
+	  fizra.print();*/
+
+	  // проверка Chemistry
+	  /*Chemistry chem("Неорганика", "бабуля", 90, 40);
+	  chem.set_necessary_visits(6);
+	  chem.visit_class();
+	  chem.test("строение атома");
+	  chem.laba();*/
+
+	  // проверка Language
+	  /*Language english("Английский", "Наталья Леонидовна", 180, 80);
+	  english.add_theme("Past simple");
+	  english.add_theme("Present Continuous");
+	  english.test("writing");
+	  english.test("Past simple");*/
+
+	  // проверка Linal
+	  Linal lin("Линал", "Терешка", 180, 75);
+	lin.exam();
+>>>>>>> 3688833823fe130acb29911735e6df980910abe0
 }
