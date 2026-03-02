@@ -20,10 +20,60 @@ public:
 		this->longliness_in_minutes = longliness_in_minutes;
 		this->chance_of_luck = chance_of_luck; // го делать просто int от 0 до 100,
 		                                       // типа проценты
-		this->themes = themes;
+		this->themes = nullptr;
+		if (themes != nullptr && number_of_themes > 0) {
+			this->themes = new std::string[number_of_themes];
+			for (int i = 0; i < number_of_themes; i++) {
+				this->themes[i] = themes[i];
+			}
+		}
 	}
+	Subject(const Subject &other)
+	{
+		this->name = other.name;
+		this->teacher_name = other.teacher_name;
+		this->longliness_in_minutes = other.longliness_in_minutes;
+		this->chance_of_luck = other.chance_of_luck;
+		this->number_of_themes = other.number_of_themes;
 
-	~Subject() { delete[] this->themes; }
+		this->themes = nullptr;
+		if (other.themes != nullptr && other.number_of_themes > 0) {
+			this->themes = new std::string[other.number_of_themes];
+			for (int i = 0; i < other.number_of_themes; i++) {
+				this->themes[i] = other.themes[i];
+			}
+		}
+	}
+	Subject &operator=(const Subject &other)
+	{
+		if (this != &other) {
+			if (this->themes != nullptr) {
+				delete[] this->themes;
+				this->themes = nullptr;
+			}
+
+			this->name = other.name;
+			this->teacher_name = other.teacher_name;
+			this->longliness_in_minutes = other.longliness_in_minutes;
+			this->chance_of_luck = other.chance_of_luck;
+			this->number_of_themes = other.number_of_themes;
+
+			if (other.themes != nullptr && other.number_of_themes > 0) {
+				this->themes = new std::string[other.number_of_themes];
+				for (int i = 0; i < other.number_of_themes; i++) {
+					this->themes[i] = other.themes[i];
+				}
+			}
+		}
+		return *this;
+	}
+	~Subject()
+	{
+		if (this->themes != nullptr) {
+			delete[] this->themes;
+			this->themes = nullptr;
+		}
+	}
 
 	void increase_or_decrease_luck(int cof)
 	{
@@ -405,7 +455,7 @@ public:
 			          << std::endl;
 			chance_of_luck += 50;
 		}
-		else if (value % code_completed == 0 && code_completed > 0) {
+		else if (code_completed > 0 && value % code_completed == 0) {
 			std::cout << "Ваш опыт с лабораторными помог занять призовое место!"
 			          << std::endl;
 			chance_of_luck += 20;
@@ -962,29 +1012,28 @@ int main()
 	chem.laba();
 
 	// проверка PE
-	/*std::string *themes_2 =
-	    new std::string[4]{"легкая атлетика", "бассейн", "зал", "коньки"};
+	std::string *themes_2 =
+	  new std::string[4]{"легкая атлетика", "бассейн", "зал", "коньки"};
 	PE fizra("ОФП женские группы", "Юрова", 80, 100, themes_2, 4, "wonderful");
 	fizra.mood_after_lesson();
 	fizra.print();
 	fizra.visit_class();
 	for (int i = 0; i < 25; i++) {
-	  fizra.mb_skip();
+		fizra.mb_skip();
 	}
 	fizra.visit_class();
-	fizra.print();*/
+	fizra.print();
 
 	// проверка Chemistry
-	/*Chemistry chem("Неорганика", "бабуля", 90, 40);
 	chem.set_necessary_visits(6);
 	chem.visit_class();
 	chem.test("строение атома");
-	chem.laba();*/
+	chem.laba();
 
 	// проверка Language
-	/*Language english("Английский", "Наталья Леонидовна", 180, 80);
+	Language english("Английский", "Наталья Леонидовна", 180, 80);
 	english.add_theme("Past simple");
 	english.add_theme("Present Continuous");
 	english.test("writing");
-	english.test("Past simple");*/
+	english.test("Past simple");
 }
