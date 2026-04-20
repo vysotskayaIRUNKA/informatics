@@ -1,6 +1,7 @@
 #include <iostream>
 using std::cout, std::endl;
 
+template<typename T>
 class subvector {
 public:
 	subvector()
@@ -10,14 +11,14 @@ public:
 		capacity = 0;
 	}
 
-	bool push_back(int d)
+	bool push_back(T d)
 	{
 		if (top == capacity) {
 			if (capacity == 0)
 				capacity = 100;
 			else
 				capacity *= 2;
-			int *new_mas = new int[capacity];
+			T *new_mas = new T[capacity];
 			for (auto i = 0u; i < top; i++)
 				new_mas[i] = mas[i];
 			if (mas != NULL)
@@ -29,7 +30,7 @@ public:
 		return true;
 	}
 
-	int pop_back()
+	T pop_back()
 	{
 		if (top == 0)
 			return 0;
@@ -48,7 +49,7 @@ public:
 		}
 		if (new_capacity == capacity)
 			return true;
-		int *new_mas = new int[new_capacity];
+		T *new_mas = new T[new_capacity];
 		for (auto i = 0u; i < top; i++)
 			new_mas[i] = mas[i];
 		capacity = new_capacity;
@@ -83,22 +84,22 @@ public:
 	}
 
 private:
-	int *mas;
+	T *mas;
 	unsigned int top;
 	unsigned int capacity;
 };
 
 int main()
 {
-	subvector vec;
-	vec.push_back(1);
-	vec.push_back(2);
-	vec.push_back(3);
-	vec.push_back(4);
-	// vec.print(); - выводит 1 2 3 4, без потерь памяти
+	subvector<double> vec;
+	vec.push_back(1.76);
+	vec.push_back(2.01);
+	vec.push_back(3.15);
+	vec.push_back(4.1);
+	vec.print();
 	vec.pop_back();
 	vec.pop_back();
-	// vec.print(); - выводит 1 2, без потерь памяти
+	vec.print();
 	vec.clear();
-	// vec.print(); - ничего не вывел
+	vec.print();
 }

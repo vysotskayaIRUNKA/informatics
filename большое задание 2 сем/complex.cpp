@@ -3,9 +3,7 @@
 
 class Complex {
 public:
-	Complex(): x(0), y(0) {}
-	Complex(int x, int y): x(x), y(y) {}
-	Complex(int x): Complex(x, 0) {}
+	Complex(int x=0, int y=0): x(x), y(y) {}
 	int getX() const { return x; }
 	int getY() const { return y; }
 	void setX(int x) { this->x = x; }
@@ -50,7 +48,7 @@ std::istream &operator>>(std::istream &is, Complex &c)
 }
 std::ostream &operator<<(std::ostream &os, const Complex &c)
 {
-	os << c.getX() << " + " << c.getY() << "i" << std::endl;
+	os << c.getX() << " + " << c.getY() << "i";
 	return os;
 }
 
