@@ -23,9 +23,9 @@ std::vector<std::string> const Card::getInformationForEveryone()
 {
 	return information_for_everyone;
 }
-void Card::put_on_stack(std::stack<int> &s)
+void Card::put_on_stack(std::vector<int> &s)
 {
-	s.push(number);
+	s.push_back(number);
 }
 
 std::ostream &operator<<(std::ostream &os, const Card &c)
@@ -33,6 +33,234 @@ std::ostream &operator<<(std::ostream &os, const Card &c)
 	os << "Карта №" << c.getNumber() << ":" << std::endl;
 	os << c.getInformation();
 	return os;
+}
+
+std::ostream &operator<<(std::ostream &os, const std::vector<std::string> &v)
+{
+	for (auto i : v) {
+		os << i << "; ";
+	}
+	return os;
+}
+
+std::vector<int> Table;
+std::vector<int> Thrown;
+std::vector<int> Thrown_by_bot;
+std::set<int> queueCards = {2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12, 13,
+                            14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24};
+int ban = 0;
+
+Bot::Bot(std::string difficulty)
+  : number_of_cards(0), difficulty(difficulty), cards_in_hand()
+{
+}
+int Bot::getNumberOfCards()
+{
+	return number_of_cards;
+}
+std::vector<Card> &Bot::getCards()
+{
+	return cards_in_hand;
+}
+void Bot::draw_cards(std::set<int> &queueCards, std::vector<Card> &pack)
+{
+	while (number_of_cards < 3 && size(queueCards) > 0) {
+		std::vector<int> cardsVector(queueCards.begin(), queueCards.end());
+		int randomElement = cardsVector[rand() % cardsVector.size()];
+		number_of_cards++;
+		cards_in_hand.push_back(pack[randomElement]);
+		queueCards.erase(randomElement);
+	}
+}
+
+void cards_on_the_table();
+
+void Bot::put_on_stack(std::vector<int> &s, int index)
+{
+	int n = cards_in_hand[index].getNumber();
+	cards_in_hand.erase(cards_in_hand.begin() + index);
+	s.push_back(n);
+	number_of_cards--;
+}
+void Bot::make_move()
+{
+	std::cout << "===========================================" << std::endl;
+	std::cout << "ОСТАТОК В КОЛОДЕ: " << size(queueCards) << std::endl
+	          << "КОЛИЧЕСТВО В СБРОСЕ: " << size(Thrown) << std::endl
+	          << "ХОД БОТА" << std::endl;
+	cards_on_the_table();
+	std::cout << std::endl;
+	if (number_of_cards == 0) {
+		std::cout << "У меня закончились карты, скипаю" << std::endl;
+		return;
+	}
+	if (difficulty == "easy") {
+		if (cards_in_hand[0].getContribution() == 1) {
+			std::cout << "Я выложил на стол карту:" << std::endl
+			          << cards_in_hand[0] << std::endl;
+			put_on_stack(Table, 0);
+		}
+		else {
+			Thrown_by_bot.push_back(cards_in_hand[0].getNumber());
+			put_on_stack(Thrown, 0);
+			std::cout << "Я сбросил карту в сброс" << std::endl;
+		}
+		draw_cards(queueCards, pack);
+		return;
+	}
+
+	else {
+		std::cout << "У меня есть карты:" << std::endl;
+		for (int i = 0; i < size(cards_in_hand); i++) {
+			std::cout << i + 1 << ": ";
+			for (auto j : cards_in_hand[i].getInformationForEveryone())
+				std::cout << j << "; ";
+			std::cout << std::endl << std::endl;
+		}
+		std::cout << "Какую карту мне использовать?" << std::endl;
+		std::cout << "(Если непонятно, сделаю выбор сам (введи -10))" << std::endl;
+		int n;
+		std::cin >> n;
+		while (n != -10 && !(n >= 1 && n <= number_of_cards)) {
+			std::cout << "Пожалуйста, введи номер одной из моих карт (1-3) или -10"
+			          << std::endl;
+			std::cin >> n;
+		}
+		if (n != -10) {
+			std::cout << "Выложить (put) или сбросить (throw)?" << std::endl;
+			std::string what_to_do;
+			std::cin >> what_to_do;
+			while (what_to_do != "put" && what_to_do != "p" &&
+			       what_to_do != "throw" && what_to_do != "t") {
+				std::cout << "Пожалуйста, введи put, p, throw или t" << std::endl;
+				std::cin >> what_to_do;
+			}
+			if (what_to_do == "put" || what_to_do == "p") {
+				std::cout << "Выложена карта:" << std::endl
+				          << cards_in_hand[n - 1] << std::endl;
+				put_on_stack(Table, n - 1);
+				if (cards_in_hand[n - 1].getContribution() == -1)
+					ban++;
+			}
+			else {
+				Thrown_by_bot.push_back(cards_in_hand[n - 1].getNumber());
+				put_on_stack(Thrown, n - 1);
+			}
+			draw_cards(queueCards, pack);
+			return;
+		}
+		else {
+			n = rand() % number_of_cards;
+			int i = rand() % 2;
+			if (i == 0) {
+				std::cout << "Я выложил на стол карту: " << std::endl
+				          << cards_in_hand[n] << std::endl;
+				put_on_stack(Table, n);
+			}
+			else {
+				std::cout << "Я сбросил карту" << std::endl;
+				Thrown_by_bot.push_back(cards_in_hand[n].getNumber());
+				put_on_stack(Thrown, n);
+			}
+			draw_cards(queueCards, pack);
+			return;
+		}
+	}
+}
+
+void Bot::clue_for_friend(std::vector<Card> his_cards)
+{
+	if (difficulty == "easy") {
+		if (his_cards[0].getContribution() == 1) {
+			std::cout << "Я бы выложил карту "
+			          << his_cards[0].getInformationForEveryone() << std::endl;
+			return;
+		}
+		else
+			std::cout << "Я бы сбросил карту "
+			          << his_cards[0].getInformationForEveryone() << std::endl;
+		return;
+	}
+	else {
+		std::vector<std::string> h = {"выложил", "сбросил"};
+		int n = rand() % size(his_cards);
+		int wtd = rand() % 2;
+		std::cout << "Я бы " << h[wtd] << " карту "
+		          << his_cards[n].getInformationForEveryone() << std::endl;
+		return;
+	}
+}
+
+Player::Player(std::string difficulty): Bot(difficulty)
+{
+}
+
+void cards_on_the_table()
+{
+	std::cout << "Карты на столе: " << std::endl;
+	for (auto i : pack) {
+		if (find(Table.begin(), Table.end(), i.getNumber()) != Table.end())
+			std::cout << i << std::endl << std::endl;
+	}
+}
+
+void Player::make_move()
+{
+	auto &my_hand = Bot::getCards();
+	if (size(my_hand) == 0) {
+		std::cout << "У вас не осталось карт" << std::endl;
+		return;
+	}
+	std::cout << "===========================================" << std::endl;
+	std::cout << "ОСТАТОК В КОЛОДЕ: " << size(queueCards) << std::endl
+	          << "КОЛИЧЕСТВО В СБРОСЕ: " << size(Thrown) << std::endl
+	          << std::endl;
+	cards_on_the_table();
+	std::cout << "Твои карты: " << std::endl;
+	int n = 1;
+	for (auto i : my_hand) {
+		std::cout << "(" << n << ")" << " " << i << std::endl;
+		n++;
+	}
+	int count = n - 1;
+	std::cout << std::endl << "Твои действия?" << std::endl;
+	std::cout << "(1) Мне нужна подсказка" << std::endl
+	          << "(2) Сам решу" << std::endl;
+	std::cin >> n;
+	while (n != 1 && n != 2) {
+		std::cout << "Пожалуйста, введите корректный символ!" << std::endl;
+		std::cin >> n;
+	}
+	if (n == 1) {
+		clue_for_friend(my_hand);
+	}
+	std::cout << "С какой картой будешь работать? (введи номер твоей карты "
+	             "по "
+	             "списку твоих карт: 1, 2 или 3)"
+	          << std::endl;
+	std::cin >> n;
+	while (!(n >= 1 && n <= count)) {
+		std::cout << "Пожалуйста, введи номер моей карты (1-3)" << std::endl;
+		std::cin >> n;
+	}
+	std::cout << "Выложишь на стол (put) или в сброс (throw)?" << std::endl;
+	std::string what_to_do;
+	std::cin >> what_to_do;
+	while (what_to_do != "put" && what_to_do != "p" && what_to_do != "throw" &&
+	       what_to_do != "t") {
+		std::cout << "Пожалуйста, введи put, p, throw или t" << std::endl;
+		std::cin >> what_to_do;
+	}
+	if (what_to_do == "put" || what_to_do == "p") {
+		put_on_stack(Table, n - 1);
+		if (my_hand[n - 1].getContribution() == -1)
+			ban++;
+	}
+	else {
+		put_on_stack(Thrown, n - 1);
+	}
+	Bot::draw_cards(queueCards, pack);
+	std::cout << std::endl << std::endl << std::endl;
 }
 
 std::vector<Card>
@@ -75,7 +303,7 @@ std::vector<Card>
             "на юг) и шоссе 151 (идет с запада на восток). "
             "Вокруг них есть поля и "
             "лес, на северо-западе поместье Роквалли",
-            0,
+            1,
             {"Карта"}},
        Card{22,
             "Всё поместье окружено изгородью. В одном месте в "
@@ -148,7 +376,8 @@ std::vector<Card>
             -1,
             {"Показания", "Миссис Роквалли", "Джеймс", "был поглощён"}},
        Card{3,
-            "Миссис Роквалли заявила, что ночью были слышны полицейские сирены "
+            "Миссис Роквалли заявила, что ночью были слышны полицейские "
+            "сирены "
             "и "
             "вертолёт",
             1,
@@ -158,7 +387,8 @@ std::vector<Card>
             "юго-западе, "
             "ниже шоссе, видим медвежий заповедник с озером гусей, на "
             "северо-западе "
-            "(выше шоссе) видим ранчо Мак-Квинли, на северо-востоке - поместье "
+            "(выше шоссе) видим ранчо Мак-Квинли, на северо-востоке - "
+            "поместье "
             "Роквалли",
             -1,
             {"Карта"}},
@@ -179,15 +409,19 @@ std::vector<Card>
             1,
             {"Камин"}},
        Card{25,
-            "У Роквалли трое детей: Джеймс (16 лет), Розмари (12 лет) и Диана "
+            "У Роквалли трое детей: Джеймс (16 лет), Розмари (12 лет) и "
+            "Диана "
             "(10лет)",
             -1,
             {"Информация", "У Роквалли трое детей"}},
        Card{30,
-            "Перекресток двух дорог - шоссе 142 и шоссе 163. Перекресток делит "
+            "Перекресток двух дорог - шоссе 142 и шоссе 163. Перекресток "
+            "делит "
             "изображенеие на четыре части. В первой четверти виден кусочек "
-            "тюрьмы, во второй - Грейамвилл (к нему есть съезд с шоссе 142), в "
-            "третьей четверти - виден кусочек поместья Роквалли, в четвертой - "
+            "тюрьмы, во второй - Грейамвилл (к нему есть съезд с шоссе 142), "
+            "в "
+            "третьей четверти - виден кусочек поместья Роквалли, в четвертой "
+            "- "
             "ничего нет. Сверху север, справа восток.",
             1,
             {"Карта"}},
@@ -205,13 +439,15 @@ std::vector<Card>
             -1,
             {"Информация", "уехал из поместья"}},
        Card{6,
-            "На фотографии мы видим сарай с инструментами. На стене висят три "
+            "На фотографии мы видим сарай с инструментами. На стене висят "
+            "три "
             "топора, хотя место есть и для четвертого, в углу стоит лопата с "
             "острым концом, на полу лежит сломанный напильник",
             1,
             {"Сарай с инструментами"}},
        Card{27,
-            "Из одежды на жертве были только трусы и носки. Спина убитого была "
+            "Из одежды на жертве были только трусы и носки. Спина убитого "
+            "была "
             "зеленой от травы",
             1,
             {"Информация", "Одежды", "Жертве"}},
