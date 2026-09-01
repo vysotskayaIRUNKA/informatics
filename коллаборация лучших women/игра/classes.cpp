@@ -86,6 +86,40 @@ std::string begin()
 		std::cin >> start_char;
 	}
 	std::cout << "===========================================" << std::endl;
+	std::cout << "ПРЕДЫСТОРИЯ" << std::endl;
+	std::cout << "Служба спасения: Служба спасения 911, чем я могу вам помочь?"
+	          << std::endl
+	          << std::endl;
+	std::cout << "Садовник: Да, здравствуйте. Мы нашли тело в поместье Роквалли."
+	          << std::endl
+	          << std::endl;
+	std::cout << "Служба спасения: По какому адресу?" << std::endl << std::endl;
+	std::cout << "Садовник: Это здесь, в поместье Роквалли." << std::endl
+	          << std::endl;
+	std::cout << "Служба спасения: Особняк Роквалли?" << std::endl << std::endl;
+	std::cout << "Садовник: Да, да. Я нашёл тело в кустах, в роще." << std::endl
+	          << std::endl;
+	std::cout << "Служба спасения: Вы проверили признаки жизни?" << std::endl
+	          << std::endl;
+	std::cout << "Садовник: Уверяю вас, это уже не нужно, парень точно мёртв."
+	          << std::endl
+	          << std::endl;
+	std::cout << "Служба спасения: Вы знаете жертву?" << std::endl << std::endl;
+	std::cout << "Садовник: Я не знаю, это белый мужчина. Он не из семьи "
+	             "Роквалли. "
+	          << "С мистером и миссис Роквалли всё в порядке, и с их детьми тоже."
+	          << std::endl
+	          << std::endl;
+	std::cout << "Служба спасения: С кем я сейчас говорю?" << std::endl
+	          << std::endl;
+	std::cout << "Садовник: Меня зовут Уильям Грегз, я садовник и сторож в "
+	             "поместье."
+	          << std::endl
+	          << std::endl;
+	std::cout << "Служба спасения: Хорошо. Полиция уже едет к вам." << std::endl
+	          << std::endl;
+	std::cout << "Садовник: Спасибо." << std::endl;
+	std::cout << "===========================================" << std::endl;
 	std::cout << "Перед началом игры выберите уровень бота, с которым хотите "
 	             "раскрыть преступление:"
 	          << std::endl;
@@ -324,6 +358,8 @@ void all_story()
 int main()
 {
 	std::string difficulty = begin();
+	if (difficulty == "1" || difficulty == "e" || difficulty == "easy")
+		difficulty = "easy";
 	Bot robot(difficulty);
 	Player human(difficulty);
 	std::cout << "У вас есть начальная карта:" << std::endl
