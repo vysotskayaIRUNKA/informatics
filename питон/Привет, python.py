@@ -57,12 +57,12 @@ print(' '.join(a)) - #'1 2 3' из [1, 2, ...]
 #while (n>=10): n = sum_of_dig(n)
 #print(n)
 
-def is_broken_x(i, j, all_windows):
+def is_broken_x(i, j, h):
     if (h[i][0]<h[j][0] and h[i][1]>h[j][1]) or (h[i][0]>h[j][1] and h[i][1]<h[j][1]):
         return True 
     return False 
 
-def is_broken_y(i, j, all_windows):
+def is_broken_y(i, j, h):
     if (h[i][2]<h[j][2] and h[i][3]>h[j][3]) or (h[i][2]>h[j][2] and h[i][3]<h[j][3]):
             return True 
     return False 
